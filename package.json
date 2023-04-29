@@ -6,17 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p tsconfig.json",
-    "start": "node index.js"
+    "start": "tsc -p tsconfig.json && node index.js",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "Gergely Garai",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cors": "^8.2.1",
+    "@prisma/client": "^4.9.0",
     "fastify": "^4.17.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.0",
     "@types/node": "^18.16.1",
+    "prisma": "^4.9.0",
     "typescript": "^5.0.4"
   }
 }
