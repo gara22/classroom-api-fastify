@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p tsconfig.json",
-    "start": "tsc -p tsconfig.json && node index.js",
+    "start": "tsc-watch --noClear -p tsconfig.json --outDir ./build --onSuccess \"node ./build/index.js\"",
     "postinstall": "prisma generate"
   },
   "keywords": [],
@@ -21,6 +21,7 @@
     "@tsconfig/node18": "^2.0.0",
     "@types/node": "^18.16.1",
     "prisma": "^4.9.0",
+    "tsc-watch": "^6.0.4",
     "typescript": "^5.0.4"
   }
 }

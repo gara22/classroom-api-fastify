@@ -3,7 +3,7 @@ import cors from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
 
 
-const app = fastify()
+const app = fastify({ logger: true })
 const prisma = new PrismaClient()
 
 app.register(cors, {
@@ -12,7 +12,7 @@ app.register(cors, {
 })
 
 app.get('/ping', async (request, reply) => {
-  return 'pong\n'
+  return 'helyyoqqq\n'
 })
 
 app.get('/classrooms', async (req, res) => {
