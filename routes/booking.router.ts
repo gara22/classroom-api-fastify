@@ -12,7 +12,7 @@ type GetBookingReq = FastifyRequest<{
     from?: Date;
     to?: Date;
     userId?: string;
-    classroomId: string;
+    classroomId?: string;
   }
 }>
 type BookingMutationReq = FastifyRequest<{
@@ -26,10 +26,10 @@ type BookingMutationReq = FastifyRequest<{
   }
 }>
 
-const getBookings = async (request: GetBookingReq, reply: FastifyReply) => {
+//public route
+const getBookingsOfClassroom = async (request: GetBookingReq, reply: FastifyReply) => {
   try {
-    //TODO: create a protected router for fetching user's bookings and remove userId from here
-    const { classroomId, from, to, userId } = request.query;
+    const { classroomId, from, to } = request.query;
 
     const bookings = await prisma.booking.findMany({
       where: {
@@ -37,7 +37,7 @@ const getBookings = async (request: GetBookingReq, reply: FastifyReply) => {
           gte: from
         }, to: {
           lte: to
-        }, bookerId: userId
+        },
 
       },
       include: {
@@ -45,7 +45,38 @@ const getBookings = async (request: GetBookingReq, reply: FastifyReply) => {
           select: {
             name: true,
           }
-        }
+        },
+      }
+    });
+    reply.status(STANDARD.SUCCESS).send({ bookings })
+  }
+  catch (e) {
+    handleServerError(reply, e)
+  }
+}
+
+//private route
+const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) => {
+  try {
+    //TODO: get user id from session/token and make this private
+    const { userId, from, to } = request.query;
+    console.log("🚀 ~ file: booking.router.ts:64 ~ getBookingsOfUser ~ request.query:", request.query)
+
+    const bookings = await prisma.booking.findMany({
+      where: {
+        bookerId: userId, from: {
+          gte: from
+        }, to: {
+          lte: to
+        },
+
+      },
+      include: {
+        booker: {
+          select: {
+            name: true,
+          }
+        }, classroom: true
       }
     });
     reply.status(STANDARD.SUCCESS).send({ bookings })
@@ -115,12 +146,25 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         from: { type: 'string', format: 'date-time' },
         to: { type: 'string', format: 'date-time' },
         classroomId: { type: 'string' },
+      }
+    },
+    // schema: createPostSchema,
+    // preHandler: [checkValidRequest, checkValidUser],
+    handler: getBookingsOfClassroom
+  })
+  fastify.route({
+    method: 'GET',
+    url: '/user',
+    schema: {
+      querystring: {
+        from: { type: 'string', format: 'date-time' },
+        to: { type: 'string', format: 'date-time' },
         userId: { type: 'string' },
       }
     },
     // schema: createPostSchema,
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: getBookings
+    handler: getBookingsOfUser
   })
 
   //TODO: make this protected and check availability

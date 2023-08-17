@@ -10,7 +10,7 @@ const app = fastify({ logger: true })
 
 app.register(cors, {
   origin: "http://localhost:5173",
-  methods: ["POST", "GET"]
+  methods: ["POST", "GET", "DELETE", "PUT"]
 })
 app.register(classroomRouter, { prefix: '/classrooms' })
 app.register(bookingRouter, { prefix: '/bookings' })
