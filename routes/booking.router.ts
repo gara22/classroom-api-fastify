@@ -4,7 +4,7 @@ import { handleServerError } from "../helpers/errors";
 import { prisma } from "../helpers/utils";
 
 type BookingByIdReq = FastifyRequest<{
-  Params: { bookingId: string }
+  Params: { id: string }
 }>
 
 type GetBookingReq = FastifyRequest<{
@@ -22,7 +22,7 @@ type BookingMutationReq = FastifyRequest<{
     classroomId: string;
     bookerId: string;
     description?: string;
-    bookingId?: string;
+    id?: string;
   }
 }>
 
@@ -89,8 +89,8 @@ const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) =>
 
 const deleteBooking = async (request: BookingByIdReq, reply: FastifyReply) => {
   try {
-    const { bookingId } = request.params;
-    await prisma.booking.delete({ where: { id: bookingId } })
+    const { id } = request.params;
+    await prisma.booking.delete({ where: { id: id } })
     reply.status(STANDARD.NOCONTENT).send()
   }
   catch (e) {
@@ -117,10 +117,10 @@ const createBooking = async (request: BookingMutationReq, reply: FastifyReply) =
 }
 const editBooking = async (request: BookingMutationReq, reply: FastifyReply) => {
   try {
-    const { from, to, bookerId, description, classroomId, bookingId } = request.body;
+    const { from, to, bookerId, description, classroomId, id } = request.body;
     await prisma.booking.update({
       where: {
-        id: bookingId
+        id: id
       },
       data: {
         from: from,
@@ -193,7 +193,7 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         classroomId: { type: 'string' },
         bookerId: { type: 'string' },
         description: { type: 'string' },
-        bookingId: { type: 'string' },
+        id: { type: 'string' },
       }
     },
     // preHandler: [checkValidRequest, checkValidUser],
@@ -201,10 +201,10 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
   })
   fastify.route({
     method: 'DELETE',
-    url: '/delete/:bookingId',
+    url: '/delete/:id',
     schema: {
       params: {
-        bookingId: { type: 'string' }
+        id: { type: 'string' }
       }
     },
     // preHandler: [checkValidRequest, checkValidUser],

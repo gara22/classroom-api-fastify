@@ -253,7 +253,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/bookings/delete/cljxc65yp0001un6waa2n7ugb",
+							"raw": "localhost:8080/bookings/delete/clfpmwpmf000aun6smiq9cxuc",
 							"host": [
 								"localhost"
 							],
@@ -261,7 +261,7 @@
 							"path": [
 								"bookings",
 								"delete",
-								"cljxc65yp0001un6waa2n7ugb"
+								"clfpmwpmf000aun6smiq9cxuc"
 							]
 						}
 					},
@@ -274,7 +274,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"bookingId\" : \"cljxcpk3o0001un7c0yhnw3bg\",\r\n    \"description\" : \"update tessssst\"\r\n}",
+							"raw": "{\r\n    \"id\" : \"cljxcpk3o0001un7c0yhnw3bg\",\r\n    \"description\" : \"update tessssstfffff\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
