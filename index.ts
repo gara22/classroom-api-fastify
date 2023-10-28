@@ -3,6 +3,7 @@ import cors from '@fastify/cors'
 import { prisma } from './helpers/utils'
 import classroomRouter from './routes/classroom.router'
 import bookingRouter from './routes/booking.router'
+import { clerkPlugin } from '@clerk/fastify'
 
 
 
@@ -12,6 +13,7 @@ app.register(cors, {
   origin: "http://localhost:5173",
   methods: ["POST", "GET", "DELETE", "PUT"]
 })
+app.register(clerkPlugin);
 app.register(classroomRouter, { prefix: '/classrooms' })
 app.register(bookingRouter, { prefix: '/bookings' })
 

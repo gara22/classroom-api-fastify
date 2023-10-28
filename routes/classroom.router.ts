@@ -47,7 +47,6 @@ const getClassroomById = async (request: ClassroomByIdReq, reply: FastifyReply) 
 const getFreeClassrooms = async (request: FreeClassroomReq, reply: FastifyReply) => {
   try {
     const { from, to, hasComputer } = request.query;
-    console.log(request.query);
 
     const classrooms = await prisma.classroom.findMany({
       where: {

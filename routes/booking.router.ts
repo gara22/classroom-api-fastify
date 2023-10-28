@@ -1,7 +1,10 @@
+import { User } from "@clerk/backend";
+import { clerkClient } from "@clerk/fastify";
+import { Booking, Classroom } from "@prisma/client";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { STANDARD } from "../helpers/constants";
 import { handleServerError } from "../helpers/errors";
-import { prisma } from "../helpers/utils";
+import { filterUserForClient, prisma } from "../helpers/utils";
 
 type BookingByIdReq = FastifyRequest<{
   Params: { id: string }
@@ -26,6 +29,40 @@ type BookingMutationReq = FastifyRequest<{
   }
 }>
 
+const addUserDataToBookings = async (bookings: Booking[]) => {
+  const userId = bookings.map((booking) => booking.bookerId);
+  const users = (
+    await clerkClient.users.getUserList({
+      userId: userId,
+      limit: 110,
+    })
+  ).map(filterUserForClient);
+
+  return bookings.map((booking) => {
+    const booker = users.find((user) => user.id === booking.bookerId);
+
+    if (!booker) {
+      console.error("AUTHOR NOT FOUND", booking);
+      throw new Error(
+        `Author for post not found. POST ID: ${booking.id}, USER ID: ${booking.bookerId}`,
+      );
+    }
+    if (!booker.username) {
+      // user the ExternalUsername
+      throw new Error(
+        `Author has no username: ${booker.id}`,
+      );
+    }
+    return {
+      ...booking,
+      booker: {
+        ...booker,
+        username: booker.username ?? "(username not found)",
+      },
+    };
+  });
+}
+
 //public route
 const getBookingsOfClassroom = async (request: GetBookingReq, reply: FastifyReply) => {
   try {
@@ -40,27 +77,22 @@ const getBookingsOfClassroom = async (request: GetBookingReq, reply: FastifyRepl
         },
 
       },
-      include: {
-        booker: {
-          select: {
-            name: true,
-          }
-        },
-      }
     });
-    reply.status(STANDARD.SUCCESS).send({ bookings })
+    reply.status(STANDARD.SUCCESS).send({ bookings: await addUserDataToBookings(bookings) })
   }
   catch (e) {
     handleServerError(reply, e)
   }
 }
 
+//TODO: specify a type for user props, also move this from here
+type BookingWithBooker = Booking & { booker: Pick<User, 'username' | 'id'> | null, classroom: Classroom };
+
 //private route
 const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) => {
   try {
     //TODO: get user id from session/token and make this private
     const { userId, from, to } = request.query;
-    console.log("🚀 ~ file: booking.router.ts:64 ~ getBookingsOfUser ~ request.query:", request.query)
 
     const bookings = await prisma.booking.findMany({
       where: {
@@ -72,14 +104,15 @@ const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) =>
 
       },
       include: {
-        booker: {
-          select: {
-            name: true,
-          }
-        }, classroom: true
-      }
+        classroom: true,
+      },
+      orderBy: [
+        {
+          from: 'desc',
+        }
+      ]
     });
-    reply.status(STANDARD.SUCCESS).send({ bookings })
+    reply.status(STANDARD.SUCCESS).send({ bookings: await addUserDataToBookings(bookings) })
   }
   catch (e) {
     handleServerError(reply, e)
