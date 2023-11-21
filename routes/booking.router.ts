@@ -2,7 +2,7 @@ import { User } from "@clerk/backend";
 import { clerkClient } from "@clerk/fastify";
 import { Booking, Classroom } from "@prisma/client";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { STANDARD } from "../helpers/constants";
+import { ERROR400, STANDARD } from "../helpers/constants";
 import { handleServerError } from "../helpers/errors";
 import { filterUserForClient, prisma } from "../helpers/utils";
 
@@ -28,6 +28,34 @@ type BookingMutationReq = FastifyRequest<{
     id?: string;
   }
 }>
+
+export const checkIfBookingExists = async (request: BookingMutationReq, reply: FastifyReply, next: Function) => {
+  const { from, to, classroomId } = request.body;
+  //TODO: check in interval not just start and date -> like find free classroom
+    const booking = await prisma.booking.findFirst({
+      where: {
+        AND: [
+          { classroomId: classroomId },
+          {
+            from: {
+              gte: from
+            }
+          },
+          {
+            to: {
+              lte: to
+            }
+          }
+        ]
+      }
+    });
+
+  if (booking){
+    reply.status(ERROR400.statusCode).send('Booking already exists in that timeframe')
+  }
+
+  next();
+}
 
 const addUserDataToBookings = async (bookings: Booking[]) => {
   const userId = bookings.map((booking) => booking.bookerId);
@@ -213,7 +241,7 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         description: { type: 'string' },
       }
     },
-    // preHandler: [checkValidRequest, checkValidUser],
+    preHandler: [checkIfBookingExists],
     handler: createBooking
   })
   fastify.route({
@@ -229,7 +257,7 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         id: { type: 'string' },
       }
     },
-    // preHandler: [checkValidRequest, checkValidUser],
+    // preHandler: [checkValidRequest],
     handler: editBooking
   })
   fastify.route({
