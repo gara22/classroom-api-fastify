@@ -16,10 +16,12 @@
     "@clerk/fastify": "^0.6.6",
     "@fastify/cors": "^8.2.1",
     "@prisma/client": "^4.9.0",
+    "dotenv": "^16.3.1",
     "fastify": "^4.17.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.0",
+    "@types/dotenv": "^8.2.0",
     "@types/node": "^18.16.1",
     "prisma": "^4.9.0",
     "tsc-watch": "^6.0.4",

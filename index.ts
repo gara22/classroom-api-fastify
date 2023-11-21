@@ -5,7 +5,9 @@ import classroomRouter from './routes/classroom.router'
 import bookingRouter from './routes/booking.router'
 import { clerkPlugin } from '@clerk/fastify'
 
+import * as dotenv from "dotenv";
 
+dotenv.config();
 
 const app = fastify({ logger: true })
 
