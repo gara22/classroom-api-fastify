@@ -148,7 +148,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"from\": \"2023-06-26T16:00:00.000Z\",\r\n    \"to\": \"2023-06-26T17:00:00.000Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"description\": \"test\",\r\n    \"bookerId\" : \"clfpmmvmg0000un2o7wq3s4ms\"\r\n}",
+							"raw": "{\r\n    \"from\": \"2023-11-21T18:00:00.000Z\",\r\n    \"to\": \"2023-11-21T19:00:00.000Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"description\": \"asdasdasdasdasdas\",\r\n    \"bookerId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -171,11 +171,18 @@
 				},
 				{
 					"name": "Get BookingsOfClassroom",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "localhost:8080/bookings?classroomId=clfsidbnn0008unm8noyybkay",
+							"raw": "localhost:8080/bookings?from=2023-09-02T22:00:00.000Z&to=2023-09-07T21:59:59.999Z&classroomId=clfsidbnn0008unm8noyybkay",
 							"host": [
 								"localhost"
 							],
@@ -186,13 +193,11 @@
 							"query": [
 								{
 									"key": "from",
-									"value": "2023-06-26T16:00:00.000Z",
-									"disabled": true
+									"value": "2023-09-02T22:00:00.000Z"
 								},
 								{
 									"key": "to",
-									"value": "2023-06-26T17:00:00.000Z",
-									"disabled": true
+									"value": "2023-09-07T21:59:59.999Z"
 								},
 								{
 									"key": "classroomId",
@@ -209,7 +214,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/bookings/user?userId=clfpmmvmg0000un2o7wq3s4ms",
+							"raw": "localhost:8080/bookings/user?userId=user_2V50mEZQqerP8u1AEY8nF3Ah4DA",
 							"host": [
 								"localhost"
 							],
@@ -231,7 +236,7 @@
 								},
 								{
 									"key": "userId",
-									"value": "clfpmmvmg0000un2o7wq3s4ms"
+									"value": "user_2V50mEZQqerP8u1AEY8nF3Ah4DA"
 								}
 							]
 						}
@@ -290,6 +295,85 @@
 							"path": [
 								"bookings",
 								"edit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "Join Room",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"startDate\": \"2023-11-20T00:00:00.000Z\",\r\n    \"endDate\": \"2023-11-26T23:59:59.999Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"userId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/rooms/join",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"rooms",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leave Room",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomId\": \"gsdgdsg\",\r\n    \"userId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/rooms/leave",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"rooms",
+								"leave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/rooms",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"rooms"
 							]
 						}
 					},

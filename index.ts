@@ -6,6 +6,7 @@ import bookingRouter from './routes/booking.router'
 import { clerkPlugin } from '@clerk/fastify'
 
 import * as dotenv from "dotenv";
+import { roomRouter } from './routes/room.router'
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.register(cors, {
 app.register(clerkPlugin);
 app.register(classroomRouter, { prefix: '/classrooms' })
 app.register(bookingRouter, { prefix: '/bookings' })
+app.register(roomRouter, { prefix: '/rooms' })
 
 
 app.get('/ping', async (request, reply) => {
