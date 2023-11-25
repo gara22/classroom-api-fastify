@@ -1,49 +1,48 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { STANDARD } from "../helpers/constants";
-import { handleServerError } from "../helpers/errors";
-import { prisma } from "../helpers/utils";
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { STANDARD } from '../helpers/constants';
+import { handleServerError } from '../helpers/errors';
+import { prisma } from '../helpers/utils';
 
 type ClassroomByIdReq = FastifyRequest<{
-  Params: { classroomId: string }
-}>
+  Params: { classroomId: string };
+}>;
 
 type CreateClassroomReq = FastifyRequest<{
   Body: {
     name: string;
     capacity: number;
     hasComputer: boolean;
-  }
-}>
+  };
+}>;
 
 type FreeClassroomReq = FastifyRequest<{
   Querystring: {
     from: Date;
     to: Date;
     hasComputer: boolean;
-  }
-}>
+  };
+}>;
 
 const getAllClassrooms = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-
     const classrooms = await prisma.classroom.findMany();
-    reply.status(STANDARD.SUCCESS).send({ classrooms })
+    reply.status(STANDARD.SUCCESS).send({ classrooms });
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 
 const getClassroomById = async (request: ClassroomByIdReq, reply: FastifyReply) => {
   try {
     const { classroomId } = request.params;
-    const classroom = await prisma.classroom.findUnique({ where: { id: classroomId } })
-    reply.status(STANDARD.SUCCESS).send({ classroom })
+    const classroom = await prisma.classroom.findUnique({
+      where: { id: classroomId },
+    });
+    reply.status(STANDARD.SUCCESS).send({ classroom });
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 const getFreeClassrooms = async (request: FreeClassroomReq, reply: FastifyReply) => {
   try {
     const { from, to, hasComputer } = request.query;
@@ -60,71 +59,65 @@ const getFreeClassrooms = async (request: FreeClassroomReq, reply: FastifyReply)
                 AND: [
                   {
                     from: {
-                      gt: from
+                      gt: from,
                     },
-
                   },
                   {
                     from: {
-                      lt: to
-                    }
-                  }
-                ]
+                      lt: to,
+                    },
+                  },
+                ],
               },
               {
                 AND: [
                   {
                     to: {
-                      gt: from
+                      gt: from,
                     },
-
                   },
                   {
                     to: {
-                      lt: to
-                    }
-                  }
-                ]
+                      lt: to,
+                    },
+                  },
+                ],
               },
               {
                 AND: [
                   {
                     from: {
-                      lte: from
+                      lte: from,
                     },
-
                   },
                   {
                     to: {
-                      gte: to
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      }
-    })
+                      gte: to,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    });
     //   //TODO: maybe find a more efficient way to filter, but its okay for now.
-    const freeClassrooms = classrooms.filter(r => r.bookings.length === 0);
-    reply.status(STANDARD.SUCCESS).send({ freeClassrooms })
+    const freeClassrooms = classrooms.filter((r) => r.bookings.length === 0);
+    reply.status(STANDARD.SUCCESS).send({ freeClassrooms });
+  } catch (e) {
+    handleServerError(reply, e);
   }
-
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 const deleteClassroom = async (request: ClassroomByIdReq, reply: FastifyReply) => {
   try {
     const { classroomId } = request.params;
-    await prisma.classroom.delete({ where: { id: classroomId } })
-    reply.status(STANDARD.NOCONTENT).send()
+    await prisma.classroom.delete({ where: { id: classroomId } });
+    reply.status(STANDARD.NOCONTENT).send();
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 const createClassroom = async (request: CreateClassroomReq, reply: FastifyReply) => {
   try {
     const { name, capacity, hasComputer } = request.body;
@@ -132,15 +125,14 @@ const createClassroom = async (request: CreateClassroomReq, reply: FastifyReply)
       data: {
         name,
         capacity,
-        hasComputer
-      }
-    })
-    reply.status(STANDARD.CREATED).send()
+        hasComputer,
+      },
+    });
+    reply.status(STANDARD.CREATED).send();
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 
 export const classroomRouter = async (fastify: FastifyInstance) => {
   fastify.route({
@@ -148,20 +140,20 @@ export const classroomRouter = async (fastify: FastifyInstance) => {
     url: '/',
     // schema: createPostSchema,
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: getAllClassrooms
-  })
+    handler: getAllClassrooms,
+  });
 
   fastify.route({
     method: 'GET',
     url: '/:classroomId',
     schema: {
       params: {
-        classroomId: { type: 'string' }
-      }
+        classroomId: { type: 'string' },
+      },
     },
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: getClassroomById
-  })
+    handler: getClassroomById,
+  });
   fastify.route({
     method: 'POST',
     url: '/new',
@@ -170,23 +162,23 @@ export const classroomRouter = async (fastify: FastifyInstance) => {
         name: { type: 'string' },
         capacity: { type: 'number' },
         hasComputer: { type: 'boolean' },
-      }
+      },
     },
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: createClassroom
-  })
+    handler: createClassroom,
+  });
   fastify.route({
     method: 'DELETE',
     url: '/delete/:classroomId',
     // prefixTrailingSlash: "no-slash",
     schema: {
       params: {
-        classroomId: { type: 'string' }
-      }
+        classroomId: { type: 'string' },
+      },
     },
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: deleteClassroom
-  })
+    handler: deleteClassroom,
+  });
   fastify.route({
     method: 'GET',
     url: '/free',
@@ -195,13 +187,11 @@ export const classroomRouter = async (fastify: FastifyInstance) => {
         from: { type: 'string', format: 'date-time' },
         to: { type: 'string', format: 'date-time' },
         hasComputer: { type: 'boolean' },
-      }
+      },
     },
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: getFreeClassrooms
-  })
+    handler: getFreeClassrooms,
+  });
 };
 
-
-
-export default classroomRouter
+export default classroomRouter;

@@ -1,14 +1,14 @@
-import { User } from "@clerk/backend";
-import { clerkClient } from "@clerk/fastify";
-import { Booking, Classroom } from "@prisma/client";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { ERROR400, STANDARD } from "../helpers/constants";
-import { handleServerError } from "../helpers/errors";
-import { filterUserForClient, prisma } from "../helpers/utils";
+import { User } from '@clerk/backend';
+import { clerkClient } from '@clerk/fastify';
+import { Booking, Classroom } from '@prisma/client';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { ERROR400, STANDARD } from '../helpers/constants';
+import { handleServerError } from '../helpers/errors';
+import { filterUserForClient, prisma } from '../helpers/utils';
 
 type BookingByIdReq = FastifyRequest<{
-  Params: { id: string }
-}>
+  Params: { id: string };
+}>;
 
 type GetBookingReq = FastifyRequest<{
   Querystring: {
@@ -16,8 +16,8 @@ type GetBookingReq = FastifyRequest<{
     to?: Date;
     userId?: string;
     classroomId?: string;
-  }
-}>
+  };
+}>;
 type BookingMutationReq = FastifyRequest<{
   Body: {
     from: Date;
@@ -26,36 +26,36 @@ type BookingMutationReq = FastifyRequest<{
     bookerId: string;
     description?: string;
     id?: string;
-  }
-}>
+  };
+}>;
 
 export const checkIfBookingExists = async (request: BookingMutationReq, reply: FastifyReply, next: Function) => {
   const { from, to, classroomId } = request.body;
   //TODO: check in interval not just start and date -> like find free classroom
-    const booking = await prisma.booking.findFirst({
-      where: {
-        AND: [
-          { classroomId: classroomId },
-          {
-            from: {
-              gte: from
-            }
+  const booking = await prisma.booking.findFirst({
+    where: {
+      AND: [
+        { classroomId: classroomId },
+        {
+          from: {
+            gte: from,
           },
-          {
-            to: {
-              lte: to
-            }
-          }
-        ]
-      }
-    });
+        },
+        {
+          to: {
+            lte: to,
+          },
+        },
+      ],
+    },
+  });
 
-  if (booking){
-    reply.status(ERROR400.statusCode).send('Booking already exists in that timeframe')
+  if (booking) {
+    reply.status(ERROR400.statusCode).send('Booking already exists in that timeframe');
   }
 
   next();
-}
+};
 
 const addUserDataToBookings = async (bookings: Booking[]) => {
   const userId = bookings.map((booking) => booking.bookerId);
@@ -70,26 +70,22 @@ const addUserDataToBookings = async (bookings: Booking[]) => {
     const booker = users.find((user) => user.id === booking.bookerId);
 
     if (!booker) {
-      console.error("AUTHOR NOT FOUND", booking);
-      throw new Error(
-        `Author for post not found. POST ID: ${booking.id}, USER ID: ${booking.bookerId}`,
-      );
+      console.error('AUTHOR NOT FOUND', booking);
+      throw new Error(`Author for post not found. POST ID: ${booking.id}, USER ID: ${booking.bookerId}`);
     }
     if (!booker.username) {
       // user the ExternalUsername
-      throw new Error(
-        `Author has no username: ${booker.id}`,
-      );
+      throw new Error(`Author has no username: ${booker.id}`);
     }
     return {
       ...booking,
       booker: {
         ...booker,
-        username: booker.username ?? "(username not found)",
+        username: booker.username ?? '(username not found)',
       },
     };
   });
-}
+};
 
 //public route
 const getBookingsOfClassroom = async (request: GetBookingReq, reply: FastifyReply) => {
@@ -98,23 +94,26 @@ const getBookingsOfClassroom = async (request: GetBookingReq, reply: FastifyRepl
 
     const bookings = await prisma.booking.findMany({
       where: {
-        classroomId: classroomId, from: {
-          gte: from
-        }, to: {
-          lte: to
+        classroomId: classroomId,
+        from: {
+          gte: from,
         },
-
+        to: {
+          lte: to,
+        },
       },
     });
-    reply.status(STANDARD.SUCCESS).send({ bookings: await addUserDataToBookings(bookings) })
+    reply.status(STANDARD.SUCCESS).send({ bookings: await addUserDataToBookings(bookings) });
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 
 //TODO: specify a type for user props, also move this from here
-type BookingWithBooker = Booking & { booker: Pick<User, 'username' | 'id'> | null, classroom: Classroom };
+type BookingWithBooker = Booking & {
+  booker: Pick<User, 'username' | 'id'> | null;
+  classroom: Classroom;
+};
 
 //private route
 const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) => {
@@ -124,12 +123,13 @@ const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) =>
 
     const bookings = await prisma.booking.findMany({
       where: {
-        bookerId: userId, from: {
-          gte: from
-        }, to: {
-          lte: to
+        bookerId: userId,
+        from: {
+          gte: from,
         },
-
+        to: {
+          lte: to,
+        },
       },
       include: {
         classroom: true,
@@ -137,27 +137,24 @@ const getBookingsOfUser = async (request: GetBookingReq, reply: FastifyReply) =>
       orderBy: [
         {
           from: 'desc',
-        }
-      ]
+        },
+      ],
     });
-    reply.status(STANDARD.SUCCESS).send({ bookings: await addUserDataToBookings(bookings) })
+    reply.status(STANDARD.SUCCESS).send({ bookings: await addUserDataToBookings(bookings) });
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
-
+};
 
 const deleteBooking = async (request: BookingByIdReq, reply: FastifyReply) => {
   try {
     const { id } = request.params;
-    await prisma.booking.delete({ where: { id: id } })
-    reply.status(STANDARD.NOCONTENT).send()
+    await prisma.booking.delete({ where: { id: id } });
+    reply.status(STANDARD.NOCONTENT).send();
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 const createBooking = async (request: BookingMutationReq, reply: FastifyReply) => {
   try {
     const { from, to, bookerId, description, classroomId } = request.body;
@@ -167,21 +164,20 @@ const createBooking = async (request: BookingMutationReq, reply: FastifyReply) =
         to,
         bookerId,
         description,
-        classroomId
-      }
-    })
-    reply.status(STANDARD.CREATED).send()
+        classroomId,
+      },
+    });
+    reply.status(STANDARD.CREATED).send();
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 const editBooking = async (request: BookingMutationReq, reply: FastifyReply) => {
   try {
     const { from, to, bookerId, description, classroomId, id } = request.body;
     await prisma.booking.update({
       where: {
-        id: id
+        id: id,
       },
       data: {
         from: from,
@@ -189,14 +185,13 @@ const editBooking = async (request: BookingMutationReq, reply: FastifyReply) => 
         bookerId: bookerId,
         classroomId: classroomId,
         description: description,
-      }
-    })
-    reply.status(STANDARD.NOCONTENT).send()
+      },
+    });
+    reply.status(STANDARD.NOCONTENT).send();
+  } catch (e) {
+    handleServerError(reply, e);
   }
-  catch (e) {
-    handleServerError(reply, e)
-  }
-}
+};
 
 export const bookingRouter = async (fastify: FastifyInstance) => {
   fastify.route({
@@ -207,12 +202,12 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         from: { type: 'string', format: 'date-time' },
         to: { type: 'string', format: 'date-time' },
         classroomId: { type: 'string' },
-      }
+      },
     },
     // schema: createPostSchema,
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: getBookingsOfClassroom
-  })
+    handler: getBookingsOfClassroom,
+  });
   fastify.route({
     method: 'GET',
     url: '/user',
@@ -221,12 +216,12 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         from: { type: 'string', format: 'date-time' },
         to: { type: 'string', format: 'date-time' },
         userId: { type: 'string' },
-      }
+      },
     },
     // schema: createPostSchema,
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: getBookingsOfUser
-  })
+    handler: getBookingsOfUser,
+  });
 
   //TODO: make this protected and check availability
   fastify.route({
@@ -239,11 +234,11 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         classroomId: { type: 'string' },
         bookerId: { type: 'string' },
         description: { type: 'string' },
-      }
+      },
     },
     preHandler: [checkIfBookingExists],
-    handler: createBooking
-  })
+    handler: createBooking,
+  });
   fastify.route({
     method: 'PUT',
     url: '/edit',
@@ -255,23 +250,22 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
         bookerId: { type: 'string' },
         description: { type: 'string' },
         id: { type: 'string' },
-      }
+      },
     },
     // preHandler: [checkValidRequest],
-    handler: editBooking
-  })
+    handler: editBooking,
+  });
   fastify.route({
     method: 'DELETE',
     url: '/delete/:id',
     schema: {
       params: {
-        id: { type: 'string' }
-      }
+        id: { type: 'string' },
+      },
     },
     // preHandler: [checkValidRequest, checkValidUser],
-    handler: deleteBooking
-  })
+    handler: deleteBooking,
+  });
 };
 
-
-export default bookingRouter
+export default bookingRouter;

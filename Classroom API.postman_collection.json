@@ -1,385 +1,321 @@
 {
-	"info": {
-		"_postman_id": "89e84acc-d1d1-42f2-a1e4-ddb82ffd71ef",
-		"name": "Classroom API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "8274283"
-	},
-	"item": [
-		{
-			"name": "Classrooms",
-			"item": [
-				{
-					"name": "Create Classroom",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"postmafffffffssssfn\",\r\n    \"capacity\": 420,\r\n    \"hasComputer\": false\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/classrooms/new",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"classrooms",
-								"new"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Classrooms",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/classrooms",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"classrooms"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Classroom By Id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/classrooms/cljx8gbog0000unm8jigan7p9",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"classrooms",
-								"cljx8gbog0000unm8jigan7p9"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Classroom",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/classrooms/delete/cljx90xmj0000un2cvgww96l6",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"classrooms",
-								"delete",
-								"cljx90xmj0000un2cvgww96l6"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Free Classrooms",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/classrooms/free?from=2023-06-26T16:00:00.000Z&to=2023-06-26T17:00:00.000Z&hasComputer=false",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"classrooms",
-								"free"
-							],
-							"query": [
-								{
-									"key": "from",
-									"value": "2023-06-26T16:00:00.000Z"
-								},
-								{
-									"key": "to",
-									"value": "2023-06-26T17:00:00.000Z"
-								},
-								{
-									"key": "hasComputer",
-									"value": "false"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Bookings",
-			"item": [
-				{
-					"name": "Create Booking",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"from\": \"2023-11-21T18:00:00.000Z\",\r\n    \"to\": \"2023-11-21T19:00:00.000Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"description\": \"asdasdasdasdasdas\",\r\n    \"bookerId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/bookings/new",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"bookings",
-								"new"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get BookingsOfClassroom",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "localhost:8080/bookings?from=2023-09-02T22:00:00.000Z&to=2023-09-07T21:59:59.999Z&classroomId=clfsidbnn0008unm8noyybkay",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"bookings"
-							],
-							"query": [
-								{
-									"key": "from",
-									"value": "2023-09-02T22:00:00.000Z"
-								},
-								{
-									"key": "to",
-									"value": "2023-09-07T21:59:59.999Z"
-								},
-								{
-									"key": "classroomId",
-									"value": "clfsidbnn0008unm8noyybkay"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get BookingsOfUser",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/bookings/user?userId=user_2V50mEZQqerP8u1AEY8nF3Ah4DA",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"bookings",
-								"user"
-							],
-							"query": [
-								{
-									"key": "from",
-									"value": "2023-06-26T16:00:00.000Z",
-									"disabled": true
-								},
-								{
-									"key": "to",
-									"value": "2023-06-26T17:00:00.000Z",
-									"disabled": true
-								},
-								{
-									"key": "userId",
-									"value": "user_2V50mEZQqerP8u1AEY8nF3Ah4DA"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Booking",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/bookings/delete/clfpmwpmf000aun6smiq9cxuc",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"bookings",
-								"delete",
-								"clfpmwpmf000aun6smiq9cxuc"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Booking",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\" : \"cljxcpk3o0001un7c0yhnw3bg\",\r\n    \"description\" : \"update tessssstfffff\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/bookings/edit",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"bookings",
-								"edit"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Rooms",
-			"item": [
-				{
-					"name": "Join Room",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"startDate\": \"2023-11-20T00:00:00.000Z\",\r\n    \"endDate\": \"2023-11-26T23:59:59.999Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"userId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/rooms/join",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"rooms",
-								"join"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Leave Room",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"roomId\": \"gsdgdsg\",\r\n    \"userId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/rooms/leave",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"rooms",
-								"leave"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Rooms",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/rooms",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"rooms"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "89e84acc-d1d1-42f2-a1e4-ddb82ffd71ef",
+    "name": "Classroom API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8274283"
+  },
+  "item": [
+    {
+      "name": "Classrooms",
+      "item": [
+        {
+          "name": "Create Classroom",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"postmafffffffssssfn\",\r\n    \"capacity\": 420,\r\n    \"hasComputer\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/classrooms/new",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["classrooms", "new"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Classrooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/classrooms",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["classrooms"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Classroom By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/classrooms/cljx8gbog0000unm8jigan7p9",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["classrooms", "cljx8gbog0000unm8jigan7p9"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Classroom",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/classrooms/delete/cljx90xmj0000un2cvgww96l6",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["classrooms", "delete", "cljx90xmj0000un2cvgww96l6"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Free Classrooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/classrooms/free?from=2023-06-26T16:00:00.000Z&to=2023-06-26T17:00:00.000Z&hasComputer=false",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["classrooms", "free"],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2023-06-26T16:00:00.000Z"
+                },
+                {
+                  "key": "to",
+                  "value": "2023-06-26T17:00:00.000Z"
+                },
+                {
+                  "key": "hasComputer",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"from\": \"2023-11-21T18:00:00.000Z\",\r\n    \"to\": \"2023-11-21T19:00:00.000Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"description\": \"asdasdasdasdasdas\",\r\n    \"bookerId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/bookings/new",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["bookings", "new"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get BookingsOfClassroom",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "localhost:8080/bookings?from=2023-09-02T22:00:00.000Z&to=2023-09-07T21:59:59.999Z&classroomId=clfsidbnn0008unm8noyybkay",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["bookings"],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2023-09-02T22:00:00.000Z"
+                },
+                {
+                  "key": "to",
+                  "value": "2023-09-07T21:59:59.999Z"
+                },
+                {
+                  "key": "classroomId",
+                  "value": "clfsidbnn0008unm8noyybkay"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get BookingsOfUser",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/bookings/user?userId=user_2V50mEZQqerP8u1AEY8nF3Ah4DA",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["bookings", "user"],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2023-06-26T16:00:00.000Z",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2023-06-26T17:00:00.000Z",
+                  "disabled": true
+                },
+                {
+                  "key": "userId",
+                  "value": "user_2V50mEZQqerP8u1AEY8nF3Ah4DA"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/bookings/delete/clfpmwpmf000aun6smiq9cxuc",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["bookings", "delete", "clfpmwpmf000aun6smiq9cxuc"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Booking",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\" : \"cljxcpk3o0001un7c0yhnw3bg\",\r\n    \"description\" : \"update tessssstfffff\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/bookings/edit",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["bookings", "edit"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rooms",
+      "item": [
+        {
+          "name": "Join Room",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"startDate\": \"2023-11-20T00:00:00.000Z\",\r\n    \"endDate\": \"2023-11-26T23:59:59.999Z\",\r\n    \"classroomId\": \"cljx8gbog0000unm8jigan7p9\",\r\n    \"userId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/rooms/join",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["rooms", "join"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Leave Room",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"roomId\": \"gsdgdsg\",\r\n    \"userId\" : \"user_2V50mEZQqerP8u1AEY8nF3Ah4DA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/rooms/leave",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["rooms", "leave"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Rooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/rooms",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["rooms"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }
