@@ -1,9 +1,12 @@
+import { WebSocket } from "ws";
+
 type Room = {
   id: string;
   users: Set<string>;
 };
 
 const rooms = new Map<string, Room>();
+const userToConnectionMap: Map<string, WebSocket> = new Map();
 
 const joinRoom = (id: string, user: string) => {
   const roomToJoin = rooms.get(id);
@@ -19,6 +22,7 @@ const joinRoom = (id: string, user: string) => {
   const updatedUsers = roomToJoin.users.add(user);
 
   rooms.set(id, { ...roomToJoin, users: updatedUsers });
+  console.log("🚀 ~ file: room.ts:22 ~ joinRoom ~ rooms:", rooms)
 };
 
 const createRoom = (id: string) => {
@@ -29,19 +33,30 @@ const createRoom = (id: string) => {
   rooms.set(id, newRoom);
 };
 
-const leaveRoom = (id: string, user: string) => {
-  const roomToLeave = rooms.get(id);
+const leaveRoom = (roomId: string, userId: string) => {
+  const roomToLeave = rooms.get(roomId);
   if (!roomToLeave) {
-    throw Error(`Cannot leave room! Room: ${id} doesn't exist`);
+    throw Error(`Cannot leave room! Room: ${roomId} doesn't exist`);
   }
 
-  //this mutates roomtoleave probably
-  roomToLeave.users.delete(user);
+  if(!rooms.get(roomId)?.users.has(userId)){
+    throw Error(`Cannot leave room! User:  ${userId} is not in room: ${roomId}`);
+  }
 
-  rooms.set(id, { ...roomToLeave });
+  //this mutates roomtoleave probably  
+  roomToLeave.users.delete(userId); 
+
+  rooms.set(roomId, { ...roomToLeave });
+  //if room is empty, delete it
+  if(rooms.get(roomId)?.users.size === 0){
+    rooms.delete(roomId);
+  }
+  console.log("🚀 ~ file: room.ts:22 ~ joinRoom ~ rooms:", rooms)
+
 };
+
 
 const createRoomId = (classRoomId: string, startDate: string, endDate: string) =>
   `${classRoomId}-${startDate}-${endDate}`;
 
-export { joinRoom, leaveRoom, createRoom, rooms, createRoomId };
+export { joinRoom, leaveRoom, createRoom, rooms, createRoomId, userToConnectionMap };
