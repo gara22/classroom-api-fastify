@@ -1,5 +1,7 @@
 import { Booking } from "@prisma/client";
 import { RawData, WebSocket } from "ws";
+import { CreateBookingParams } from "../routes/booking.router";
+import { createBooking } from "./bookings";
 import { joinRoom, leaveRoom, rooms, userToConnectionMap } from "./room";
 
 // type MessageType = 'join' | 'leave' | 'book';
@@ -14,9 +16,9 @@ type LeaveMessage = {
   type: 'leave';
   payload: LeavePayload;
 }
-type BookMessage = {
-  type: 'book';
-  payload: BookPayload;
+type CreateBookingMessage = {
+  type: 'create_booking';
+  payload: CreateBookingPayload;
 }
 
 type JoinPayload = {
@@ -27,11 +29,12 @@ type LeavePayload = {
   roomId: string;
 } & MessagePayload
 
-type BookPayload = {
-  booking: Booking;
+type CreateBookingPayload = {
+  roomId: string;
+  booking: CreateBookingParams;
 } & MessagePayload
 
-export type WebsocketMessage = JoinMessage | LeaveMessage | BookMessage;
+export type WebsocketMessage = JoinMessage | LeaveMessage | CreateBookingMessage;
 
 export type CustomWebSocket = {
   id: string;
@@ -64,6 +67,15 @@ export const handleLeave = ({ roomId, userId }: { roomId: string, userId: string
   //TODO: think about where to put this
   userToConnectionMap.delete(userId);
   const msg = { type: 'leave', payload: `User: ${userId}, left room ${roomId}` };
+  broadcastToRoom(roomId, msg);
+}
+
+export const handleCreateBooking = async (payload: CreateBookingPayload) => {
+  const {booking, roomId} = payload
+  console.log("🚀 ~ file: socket.ts:75 ~ handleCreateBooking ~ payload:", booking)
+  const newBooking = await createBooking(booking);
+  //TODO: think about where to put this
+  const msg = { type: 'new_booking', payload: `New booking has been created, from: ${newBooking.from}, to: ${newBooking.to},  ${newBooking}` };
   broadcastToRoom(roomId, msg);
 }
 

@@ -9,7 +9,7 @@ import websocket from '@fastify/websocket'
 
 import * as dotenv from 'dotenv';
 import { roomRouter } from './routes/room.router';
-import { CustomWebSocket, handleJoin, handleLeave, parseMessage, removeConnection } from './utils/socket';
+import { CustomWebSocket, handleCreateBooking, handleJoin, handleLeave, parseMessage, removeConnection } from './utils/socket';
 import { merge } from 'lodash';
 
 dotenv.config();
@@ -43,7 +43,9 @@ app.register(async function (fastify) {
             const { roomId, userId } = payload;
             handleLeave({ roomId, userId });
             break;
-
+          case 'create_booking':
+            handleCreateBooking(payload);
+            break;
           default:
             console.warn(`Unhandled message type: ${type}`);
 

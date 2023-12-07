@@ -1,5 +1,6 @@
 import { CustomWebSocket } from "./socket";
 
+//TODO: maybe instead of users, we should store socket ids... 
 type Room = {
   id: string;
   users: Set<string>;

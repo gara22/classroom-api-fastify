@@ -5,6 +5,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { ERROR400, STANDARD } from '../helpers/constants';
 import { handleServerError } from '../helpers/errors';
 import { filterUserForClient, prisma } from '../helpers/utils';
+import { checkIfTimeFrameHasBooking, createBooking } from '../utils/bookings';
 
 type BookingByIdReq = FastifyRequest<{
   Params: { id: string };
@@ -18,43 +19,25 @@ type GetBookingReq = FastifyRequest<{
     classroomId?: string;
   };
 }>;
+export type CreateBookingParams = {
+  from: Date;
+  to: Date;
+  classroomId: string;
+  bookerId: string;
+  description?: string;
+  id?: string;
+
+}
 type BookingMutationReq = FastifyRequest<{
-  Body: {
-    from: Date;
-    to: Date;
-    classroomId: string;
-    bookerId: string;
-    description?: string;
-    id?: string;
-  };
+  Body: CreateBookingParams;
 }>;
 
-export const checkIfBookingExists = async (request: BookingMutationReq, reply: FastifyReply, next: Function) => {
+export const checkIfBookingExists = async (request: BookingMutationReq, reply: FastifyReply) => {
   const { from, to, classroomId } = request.body;
-  //TODO: check in interval not just start and date -> like find free classroom
-  const booking = await prisma.booking.findFirst({
-    where: {
-      AND: [
-        { classroomId: classroomId },
-        {
-          from: {
-            gte: from,
-          },
-        },
-        {
-          to: {
-            lte: to,
-          },
-        },
-      ],
-    },
-  });
-
-  if (booking) {
+  
+  if (await checkIfTimeFrameHasBooking({from, to, classroomId})) {
     reply.status(ERROR400.statusCode).send('Booking already exists in that timeframe');
   }
-
-  next();
 };
 
 const addUserDataToBookings = async (bookings: Booking[]) => {
@@ -155,18 +138,10 @@ const deleteBooking = async (request: BookingByIdReq, reply: FastifyReply) => {
     handleServerError(reply, e);
   }
 };
-const createBooking = async (request: BookingMutationReq, reply: FastifyReply) => {
+const handleCreateBooking = async (request: BookingMutationReq, reply: FastifyReply) => {
   try {
-    const { from, to, bookerId, description, classroomId } = request.body;
-    await prisma.booking.create({
-      data: {
-        from,
-        to,
-        bookerId,
-        description,
-        classroomId,
-      },
-    });
+    const { id, ...rest } = request.body;
+    await createBooking(rest);
     reply.status(STANDARD.CREATED).send();
   } catch (e) {
     handleServerError(reply, e);
@@ -237,7 +212,7 @@ export const bookingRouter = async (fastify: FastifyInstance) => {
       },
     },
     preHandler: [checkIfBookingExists],
-    handler: createBooking,
+    handler: handleCreateBooking,
   });
   fastify.route({
     method: 'PUT',
