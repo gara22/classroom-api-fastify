@@ -1,4 +1,4 @@
-import { WebSocket } from "ws";
+import { CustomWebSocket } from "./socket";
 
 type Room = {
   id: string;
@@ -6,7 +6,7 @@ type Room = {
 };
 
 const rooms = new Map<string, Room>();
-const userToConnectionMap: Map<string, WebSocket> = new Map();
+const userToConnectionMap: Map<string, CustomWebSocket> = new Map();
 
 const joinRoom = (id: string, user: string) => {
   const roomToJoin = rooms.get(id);
@@ -52,7 +52,6 @@ const leaveRoom = (roomId: string, userId: string) => {
     rooms.delete(roomId);
   }
   console.log("🚀 ~ file: room.ts:22 ~ joinRoom ~ rooms:", rooms)
-
 };
 
 

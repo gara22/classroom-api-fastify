@@ -33,7 +33,11 @@ type BookPayload = {
 
 export type WebsocketMessage = JoinMessage | LeaveMessage | BookMessage;
 
-export const sendMessage = <T>(socket: WebSocket, msg: any) => {
+export type CustomWebSocket = {
+  id: string;
+} & WebSocket;
+
+export const sendMessage = <T>(socket: CustomWebSocket, msg: any) => {
   const stringMsg = JSON.stringify(msg);
   socket.send(stringMsg);
 }
@@ -46,17 +50,16 @@ export const parseMessage = <T>(msg: RawData) => {
   }
 }
 
-export const handleJoin = (socket: WebSocket, payload: JoinPayload) => {
-  const {roomId, userId } = payload;
+export const handleJoin = (socket: CustomWebSocket, payload: JoinPayload) => {
+  const { roomId, userId } = payload;
   joinRoom(roomId, userId);
-    //TODO: think about where to put this
+  //TODO: think about where to put this
   userToConnectionMap.set(userId, socket);
   const msg = { type: 'join', payload: `User: ${userId}, joined room ${roomId}` };
   broadcastToRoom(roomId, msg);
 }
 
-export const handleLeave = (payload: LeavePayload) => {
-  const {roomId, userId } = payload;
+export const handleLeave = ({ roomId, userId }: { roomId: string, userId: string }) => {
   leaveRoom(roomId, userId);
   //TODO: think about where to put this
   userToConnectionMap.delete(userId);
@@ -68,4 +71,21 @@ export const broadcastToRoom = (roomId: string, msg: any) => {
   const room = rooms.get(roomId);
   userToConnectionMap.forEach((client, userId) => room?.users.has(userId) && sendMessage(client, msg))
 }
+
+export const removeUserFromRoom = (userId: string) => {
+  rooms.forEach(room => {
+    if (room.users.has(userId)) {
+      handleLeave({roomId: room.id, userId});
+    }
+  })
+}
+export const removeConnection = (socket: CustomWebSocket) => {
+  console.log("🚀 ~ file: socket.ts:77 ~ removeConnection ~ socket:", 'dc')
+  userToConnectionMap.forEach((conn, userId) => {
+    if (socket.id === conn.id) {
+      removeUserFromRoom(userId);
+    }
+  })
+}
+
 
